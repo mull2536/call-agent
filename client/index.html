@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SMF Call Agent</title>
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/components.css">
+    <link rel="stylesheet" href="styles/calling.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/x-icon" href="assets/favicon.ico">
+    <link rel="shortcut icon" href="assets/favicon.ico" type="image/x-icon">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="header-left">
+                <h1>SMF CALL AGENT</h1>
+            </div>
+            <div class="header-center">
+                <!-- Status Indicators moved to header -->
+                <div class="header-status-indicators">
+                    <div class="status-indicator" id="server-status">
+                        <div class="status-dot"></div>
+                        <span>Server: Disconnected</span>
+                    </div>
+                    <div class="status-indicator" id="call-status">
+                        <div class="status-dot"></div>
+                        <span>Call: Disconnected</span>
+                    </div>
+                </div>
+            </div>
+            <div class="header-right">
+                <img src="assets/contacts.ico" alt="Contacts" class="header-icon contacts-icon" onclick="openContactsModal()" title="Manage Contacts">
+                <button class="header-icon history-icon" onclick="openHistoryModal()" title="Call History">
+                    📞
+                </button>
+                <img src="assets/settings.ico" alt="Settings" class="header-icon settings-icon" id="settings-btn" title="Settings">
+                <div class="call-indicator">
+                    <span id="current-contact">No contact selected</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Conversation Display -->
+            <div class="conversation-display">
+                <div id="transcript-container" class="transcript-container">
+                    <div class="welcome-message">
+                        <h2>Welcome to SMF Call Agent!</h2>
+                        <p>Select a contact and configure your call settings to start a conversation.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Removed call-controls section to make conversation area more visible -->
+
+            <!-- Bottom Controls - Message Input and Call Buttons -->
+            <div class="bottom-controls">
+                <div class="message-input-container">
+                    <div class="input-group">
+                        <label for="first-message">First Message</label>
+                        <textarea 
+                            id="first-message" 
+                            class="message-input" 
+                            placeholder="Enter the first message to say when the call connects..."
+                            rows="3"
+                        >Hi, this is an AI assistant calling. How are you today?</textarea>
+                    </div>
+                </div>
+                <div class="call-buttons-stack">
+                    <button id="call-btn" class="control-btn call-btn" disabled>
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                        </svg>
+                        <span>Start Call</span>
+                    </button>
+                    <button id="hangup-btn" class="control-btn hangup-btn" disabled>
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M10.68 13.31a16 16 0 0 0 3.41 2.6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7 2 2 0 0 1 1.72 2v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 1.27 1.27z"></path>
+                            <path d="m21 5-6 6m6 0-6-6" stroke="#ef4444"></path>
+                        </svg>
+                        <span>Hang Up</span>
+                    </button>
+                </div>
+            </div>
+        </main>
+
+        <!-- Settings Modal -->
+        <div id="settings-modal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Call Agent Settings</h2>
+                    <button class="close-btn" id="close-settings">&times;</button>
+                </div>
+                
+                <div class="modal-body">
+                    <div class="settings-section">
+                        <h3>Twilio Phone Number</h3>
+                        <div class="setting-item">
+                            <label for="twilio-number-select">Select which Twilio number to use for outbound calls</label>
+                            <select id="twilio-number-select" class="twilio-number-select">
+                                <option value="">Loading numbers...</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="settings-section">
+                        <h3>System Prompt</h3>
+                        <div class="setting-item">
+                            <label for="system-prompt">Define how the AI assistant should behave during calls</label>
+                            <div class="prompt-container">
+                                <textarea 
+                                    id="system-prompt" 
+                                    class="prompt-textarea" 
+                                    rows="8" 
+                                    placeholder="You are a friendly AI assistant making a phone call..."
+                                >You are a friendly AI assistant making a phone call. Your goal is to have a natural conversation with the person who answers. Be polite, clear, and respectful.</textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="modal-footer">
+                    <button class="save-btn" id="save-settings">Save Settings</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Contacts Modal -->
+        <div id="contacts-modal" class="modal">
+            <div class="modal-content contacts-modal-content">
+                <div class="modal-header">
+                    <h2>Contacts Management</h2>
+                    <span class="close-modal" onclick="closeContactsModal()">&times;</span>
+                </div>
+                
+                <div class="modal-body">
+                    <div class="contacts-section">
+                        <h3>Select a Contact:</h3>
+                        <div id="contacts-grid" class="contacts-grid">
+                            <!-- Contact buttons will be dynamically loaded here -->
+                        </div>
+                    </div>
+                    
+                    <div class="edit-contact-section" id="edit-contact-section" style="display: none;">
+                        <h3>Edit Contact</h3>
+                        <div class="edit-contact-form">
+                            <input type="text" 
+                                   id="edit-contact-name" 
+                                   placeholder="Contact's name" 
+                                   class="contact-input">
+                            <input type="text" 
+                                   id="edit-contact-phone" 
+                                   placeholder="Phone number (+1234567890)" 
+                                   class="contact-input">
+                        </div>
+                    </div>
+                    
+                    <div class="add-contact-section" id="add-contact-section">
+                        <h3>Add New Contact</h3>
+                        <div class="add-contact-form">
+                            <input type="text" 
+                                   id="new-contact-name" 
+                                   placeholder="Contact's name (e.g. John)" 
+                                   class="contact-input">
+                            <input type="text" 
+                                   id="new-contact-phone" 
+                                   placeholder="Phone number (+1234567890)" 
+                                   class="contact-input">
+                        </div>
+                    </div>
+                    
+                    <!-- Action buttons at bottom -->
+                    <div id="contact-actions" class="contact-actions">
+                        <button onclick="saveOrUpdateContact()" class="btn-primary action-btn" id="save-btn">Save</button>
+                        <button onclick="deleteContact()" class="btn-danger action-btn" id="delete-btn" style="display: none;">Delete</button>
+                        <button onclick="useContact()" class="btn-success action-btn" id="use-btn" style="display: none;">Use</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Call History Modal -->
+        <div id="history-modal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Call History</h2>
+                    <button class="close-btn" onclick="closeHistoryModal()">&times;</button>
+                </div>
+                
+                <div class="modal-body">
+                    <div class="history-filters">
+                        <button class="filter-btn active" data-filter="all">All Calls</button>
+                        <button class="filter-btn" data-filter="inbound">📞 Inbound</button>
+                        <button class="filter-btn" data-filter="outbound">📱 Outbound</button>
+                    </div>
+                    <div id="history-list" class="history-list">
+                        <p class="loading-message">Loading call history...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/contactsManager.js"></script>
+    <script src="js/callManager.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>

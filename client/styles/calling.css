@@ -1,0 +1,433 @@
+/* ==============================================
+   CALL-SPECIFIC STYLING
+   ============================================== */
+
+/* Legacy call-controls styles removed - now using bottom-controls layout */
+/* Status indicators moved to header */
+/* Control buttons moved to call-buttons-stack */
+
+.control-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    padding: 1rem 1.5rem;
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-semibold);
+    border: 2px solid transparent;
+    border-radius: var(--border-radius-lg);
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    min-height: 56px;
+    min-width: 140px;
+    position: relative;
+    overflow: hidden;
+}
+
+.control-btn svg {
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
+}
+
+.control-btn span {
+    font-weight: var(--font-weight-semibold);
+}
+
+/* Call Button */
+.call-btn {
+    background: linear-gradient(135deg, var(--success-color), #059669);
+    color: white;
+    border-color: var(--success-color);
+    box-shadow: 0 4px 16px rgba(16, 185, 129, 0.3);
+}
+
+.call-btn:hover:not(:disabled) {
+    background: linear-gradient(135deg, #059669, #047857);
+    border-color: #059669;
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+}
+
+.call-btn:active:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 3px 12px rgba(16, 185, 129, 0.4);
+}
+
+.call-btn:disabled {
+    background: linear-gradient(135deg, var(--secondary-color), #475569);
+    border-color: var(--secondary-color);
+    box-shadow: none;
+    cursor: not-allowed;
+}
+
+/* Hang Up Button */
+.hangup-btn {
+    background: linear-gradient(135deg, var(--danger-color), #dc2626);
+    color: white;
+    border-color: var(--danger-color);
+    box-shadow: 0 4px 16px rgba(239, 68, 68, 0.3);
+}
+
+.hangup-btn:hover:not(:disabled) {
+    background: linear-gradient(135deg, #dc2626, #b91c1c);
+    border-color: #dc2626;
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(239, 68, 68, 0.4);
+}
+
+.hangup-btn:active:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 3px 12px rgba(239, 68, 68, 0.4);
+}
+
+.hangup-btn:disabled {
+    background: linear-gradient(135deg, var(--secondary-color), #475569);
+    border-color: var(--secondary-color);
+    box-shadow: none;
+    cursor: not-allowed;
+}
+
+/* Call State Animations */
+.call-btn.calling {
+    animation: pulse 2s ease-in-out infinite;
+    background: linear-gradient(135deg, var(--warning-color), #d97706);
+    border-color: var(--warning-color);
+}
+
+.call-btn.calling svg {
+    animation: spin 2s linear infinite;
+}
+
+.hangup-btn.active {
+    animation: pulseRed 2s ease-in-out infinite;
+}
+
+/* Call Status Specific Styles */
+.status-indicator.server-status {
+    border-color: var(--border-color);
+}
+
+.status-indicator.server-status.status-active {
+    border-color: var(--primary-color);
+    background-color: rgba(59, 130, 246, 0.1);
+}
+
+.status-indicator.call-status {
+    border-color: var(--border-color);
+}
+
+.status-indicator.call-status.status-active {
+    border-color: var(--success-color);
+    background-color: rgba(16, 185, 129, 0.1);
+}
+
+.status-indicator.call-status.status-calling {
+    border-color: var(--warning-color);
+    background-color: rgba(245, 158, 11, 0.1);
+    animation: pulseYellow 2s ease-in-out infinite;
+}
+
+.status-indicator.call-status.status-calling .status-dot {
+    background: var(--warning-color);
+    box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.2);
+    animation: pulse 1.5s ease-in-out infinite;
+}
+
+/* Call Type Indicator */
+.call-type-indicator {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background-color: var(--surface-hover);
+    border-radius: var(--border-radius);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    color: var(--text-secondary);
+    border: 1px solid var(--border-color);
+    margin-bottom: 1rem;
+}
+
+.call-type-indicator.outbound {
+    border-color: var(--primary-color);
+    background-color: rgba(59, 130, 246, 0.1);
+    color: var(--primary-color);
+}
+
+.call-type-indicator.inbound {
+    border-color: var(--success-color);
+    background-color: rgba(16, 185, 129, 0.1);
+    color: var(--success-color);
+}
+
+.call-type-indicator svg {
+    width: 16px;
+    height: 16px;
+}
+
+/* Call Duration Display */
+.call-duration {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background-color: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: var(--border-radius);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    font-family: 'SF Mono', Monaco, Consolas, monospace;
+    backdrop-filter: blur(4px);
+}
+
+/* Button Loading States */
+.control-btn.loading {
+    pointer-events: none;
+    position: relative;
+}
+
+.control-btn.loading span {
+    opacity: 0.7;
+}
+
+.control-btn.loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 20px;
+    height: 20px;
+    margin: -10px 0 0 -10px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-top: 2px solid white;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+/* Contact Selection in Call Context */
+.call-contact-info {
+    background-color: var(--background);
+    padding: 1rem;
+    border-radius: var(--border-radius);
+    border: 1px solid var(--border-color);
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+.call-contact-info.has-contact {
+    border-color: var(--success-color);
+    background-color: rgba(16, 185, 129, 0.05);
+}
+
+.call-contact-name {
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-semibold);
+    color: var(--text-primary);
+    margin-bottom: 0.25rem;
+}
+
+.call-contact-phone {
+    font-size: var(--font-size-base);
+    color: var(--text-secondary);
+    font-family: 'SF Mono', Monaco, Consolas, monospace;
+}
+
+.no-contact-selected {
+    color: var(--text-muted);
+    font-style: italic;
+}
+
+/* Call Progress Indicators */
+.call-progress {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem;
+    background-color: var(--background);
+    border-radius: var(--border-radius);
+    border: 1px solid var(--border-color);
+    margin-bottom: 1rem;
+}
+
+.call-progress.connecting {
+    border-color: var(--warning-color);
+    background-color: rgba(245, 158, 11, 0.05);
+}
+
+.call-progress.connected {
+    border-color: var(--success-color);
+    background-color: rgba(16, 185, 129, 0.05);
+}
+
+.call-progress.ended {
+    border-color: var(--danger-color);
+    background-color: rgba(239, 68, 68, 0.05);
+}
+
+.call-progress-icon {
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
+}
+
+.call-progress-text {
+    flex: 1;
+    font-weight: var(--font-weight-medium);
+}
+
+.call-progress.connecting .call-progress-icon {
+    animation: spin 2s linear infinite;
+    color: var(--warning-color);
+}
+
+.call-progress.connected .call-progress-icon {
+    color: var(--success-color);
+}
+
+.call-progress.ended .call-progress-icon {
+    color: var(--danger-color);
+}
+
+/* Animations */
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 0.8;
+        transform: scale(1.05);
+    }
+}
+
+@keyframes pulseRed {
+    0%, 100% {
+        box-shadow: 0 4px 16px rgba(239, 68, 68, 0.3);
+    }
+    50% {
+        box-shadow: 0 4px 20px rgba(239, 68, 68, 0.6);
+    }
+}
+
+@keyframes pulseYellow {
+    0%, 100% {
+        border-color: var(--warning-color);
+    }
+    50% {
+        border-color: #d97706;
+        box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.2);
+    }
+}
+
+/* Error and Success States */
+.call-error {
+    background-color: rgba(239, 68, 68, 0.1);
+    border: 1px solid var(--danger-color);
+    color: var(--danger-color);
+    padding: 1rem;
+    border-radius: var(--border-radius);
+    margin-bottom: 1rem;
+    font-weight: var(--font-weight-medium);
+}
+
+.call-success {
+    background-color: rgba(16, 185, 129, 0.1);
+    border: 1px solid var(--success-color);
+    color: var(--success-color);
+    padding: 1rem;
+    border-radius: var(--border-radius);
+    margin-bottom: 1rem;
+    font-weight: var(--font-weight-medium);
+}
+
+/* Responsive Design for New Layout */
+@media (max-width: 768px) {
+    /* Responsive rules moved to components.css and main.css */
+    /* for bottom-controls and header-status-indicators */
+    
+    .call-duration {
+        position: static;
+        margin-bottom: 1rem;
+        text-align: center;
+        background-color: var(--surface-hover);
+        border: 1px solid var(--border-color);
+    }
+}
+
+@media (max-width: 480px) {
+    .call-controls {
+        padding: 0.75rem;
+    }
+    
+    .control-btn {
+        font-size: var(--font-size-sm);
+        padding: 0.875rem;
+        min-height: 50px;
+    }
+    
+    .control-btn svg {
+        width: 20px;
+        height: 20px;
+    }
+    
+    .status-indicator {
+        padding: 0.625rem 0.875rem;
+        font-size: var(--font-size-xs);
+    }
+    
+    .status-dot {
+        width: 10px;
+        height: 10px;
+        margin-right: 10px;
+    }
+}
+
+/* High Contrast Mode Support for Call Elements */
+@media (prefers-contrast: high) {
+    .status-dot {
+        border: 2px solid currentColor;
+    }
+    
+    .control-btn {
+        border-width: 3px;
+    }
+    
+    .call-btn:not(:disabled) {
+        background: var(--success-color);
+        border-color: var(--success-color);
+    }
+    
+    .hangup-btn:not(:disabled) {
+        background: var(--danger-color);
+        border-color: var(--danger-color);
+    }
+}
+
+/* Voice Activity Indicator */
+.voice-activity {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--success-color), #059669, var(--success-color));
+    border-radius: 0 0 var(--border-radius) var(--border-radius);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.transcript-container.speaking .voice-activity {
+    opacity: 1;
+    animation: voiceActivity 1.5s ease-in-out infinite;
+}
+
+@keyframes voiceActivity {
+    0%, 100% {
+        transform: scaleX(0.8);
+    }
+    50% {
+        transform: scaleX(1);
+    }
+}

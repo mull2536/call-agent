@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//c/AI/SMF/voice-agent/**)",
+      "Bash(dir:*)",
+      "Bash(powershell:*)",
+      "Bash(node server.js)",
+      "Bash(timeout:*)",
+      "Bash(curl:*)",
+      "Bash(npx playwright:*)",
+      "Bash(npm run test:smoke:*)",
+      "WebSearch",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:elevenlabs.io)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

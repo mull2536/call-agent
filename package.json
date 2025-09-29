@@ -1,0 +1,49 @@
+{
+  "name": "conversational-ai-twilio",
+  "version": "2.0.0",
+  "description": "Call agent using ElevenLabs and Twilio with modular backend",
+  "main": "outbound.js",
+  "type": "module",
+  "scripts": {
+    "start": "node server/index.js",
+    "start:root": "node server.js",
+    "start:backup": "node outbound.js",
+    "dev": "nodemon server/index.js",
+    "dev:root": "nodemon server.js",
+    "dev:backup": "nodemon outbound-backup.js",
+    "dev-ngrok": "concurrently \"nodemon server/index.js\" \"ngrok http --hostname=included-verified-tarpon.ngrok-free.app 8080 --config C:\\Users\\Bernard\\AppData\\Local\\ngrok\\ngrok-smf.yml --pooling-enabled\"",
+    "ngrok": "ngrok http --hostname=included-verified-tarpon.ngrok-free.app 8080 --config C:\\Users\\Bernard\\AppData\\Local\\ngrok\\ngrok-smf.yml --pooling-enabled\"",
+    "test": "playwright test --config=tests/config/playwright.config.js",
+    "test:ui": "playwright test --config=tests/config/playwright.config.js --headed",
+    "test:debug": "playwright test --config=tests/config/playwright.config.js --debug",
+    "test:chromium": "playwright test --config=tests/config/playwright.config.js --project=chromium",
+    "test:firefox": "playwright test --config=tests/config/playwright.config.js --project=firefox",
+    "test:webkit": "playwright test --config=tests/config/playwright.config.js --project=webkit",
+    "test:mobile": "playwright test --config=tests/config/playwright.config.js --project=mobile-chrome --project=mobile-safari",
+    "test:smoke": "playwright test --config=tests/config/playwright.config.js --grep @smoke",
+    "test:regression": "playwright test --config=tests/config/playwright.config.js --grep @regression",
+    "test:accessibility": "playwright test --config=tests/config/playwright.config.js --project=accessibility",
+    "test:performance": "playwright test --config=tests/config/playwright.config.js --project=performance",
+    "test:ci": "playwright test --config=tests/config/playwright.config.js --reporter=html,junit",
+    "test:report": "playwright show-report",
+    "test:install": "playwright install",
+    "test:codegen": "playwright codegen http://localhost:8080/client/index-new.html",
+    "migrate:call-history": "node migrate-call-history.js"
+  },
+  "dependencies": {
+    "@fastify/cors": "^8.0.0",
+    "@fastify/formbody": "^7.0.0",
+    "@fastify/static": "^6.0.0",
+    "@fastify/websocket": "^7.0.0",
+    "dotenv": "^16.0.0",
+    "fastify": "^4.0.0",
+    "pino-pretty": "^10.0.0",
+    "twilio": "^4.0.0",
+    "ws": "^8.0.0"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.55.0",
+    "concurrently": "^8.2.2",
+    "nodemon": "^2.0.0"
+  }
+}
