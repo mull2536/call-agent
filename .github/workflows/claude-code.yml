@@ -1,0 +1,139 @@
+name: Claude Code CI/CD
+
+on:
+  push:
+    branches: [ master, main, develop ]
+  pull_request:
+    branches: [ master, main ]
+  workflow_dispatch:
+    inputs:
+      claude_task:
+        description: 'Task for Claude to perform'
+        required: true
+        default: 'Review code and suggest improvements'
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+  actions: read
+
+jobs:
+  claude-code-review:
+    runs-on: ubuntu-latest
+    name: Claude Code Analysis
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Run tests (if available)
+      run: |
+        if [ -f "package.json" ] && grep -q '"test"' package.json; then
+          npm test || echo "Tests failed or not configured"
+        else
+          echo "No tests configured"
+        fi
+      continue-on-error: true
+
+    - name: Install Claude Code
+      run: npm install -g @anthropic-ai/claude-code
+
+    - name: Run Claude Code Analysis
+      env:
+        ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+      run: |
+        # Create a task file for Claude
+        cat > claude_task.md << 'EOF'
+        # Claude Code Analysis Task
+
+        Please analyze this codebase and provide:
+
+        1. **Code Quality Review**:
+           - Identify potential bugs or security issues
+           - Suggest performance improvements
+           - Check for best practices adherence
+
+        2. **Architecture Assessment**:
+           - Review project structure and organization
+           - Suggest architectural improvements
+           - Identify potential scalability issues
+
+        3. **Documentation Review**:
+           - Check if README is comprehensive and accurate
+           - Suggest missing documentation
+           - Verify setup instructions
+
+        4. **Dependency Analysis**:
+           - Review package.json for outdated dependencies
+           - Identify security vulnerabilities
+           - Suggest dependency optimizations
+
+        5. **Specific to this project**:
+           - Review Twilio integration patterns
+           - Check ElevenLabs API usage
+           - Validate WebSocket implementation
+           - Assess error handling and logging
+
+        Please provide actionable recommendations with specific file references.
+        EOF
+
+        # Run Claude Code with the task
+        echo "Running Claude Code analysis..."
+        claude --api-key="$ANTHROPIC_API_KEY" < claude_task.md > claude_analysis.md || echo "Claude analysis completed with warnings"
+
+        # Display results
+        echo "## Claude Code Analysis Results" >> $GITHUB_STEP_SUMMARY
+        cat claude_analysis.md >> $GITHUB_STEP_SUMMARY
+
+    - name: Upload Analysis Results
+      uses: actions/upload-artifact@v4
+      with:
+        name: claude-analysis-${{ github.sha }}
+        path: claude_analysis.md
+        retention-days: 30
+
+  claude-code-task:
+    runs-on: ubuntu-latest
+    name: Custom Claude Task
+    if: github.event_name == 'workflow_dispatch'
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+
+    - name: Install Claude Code
+      run: npm install -g @anthropic-ai/claude-code
+
+    - name: Run Custom Claude Task
+      env:
+        ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+      run: |
+        echo "${{ github.event.inputs.claude_task }}" | claude --api-key="$ANTHROPIC_API_KEY" > custom_task_result.md
+
+        echo "## Custom Task Results" >> $GITHUB_STEP_SUMMARY
+        cat custom_task_result.md >> $GITHUB_STEP_SUMMARY
+
+    - name: Upload Task Results
+      uses: actions/upload-artifact@v4
+      with:
+        name: claude-custom-task-${{ github.sha }}
+        path: custom_task_result.md
+        retention-days: 30
